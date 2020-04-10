@@ -1,95 +1,150 @@
-// Assignment Code
-//Create query selector that targets the button element in the html file with id="generate".
+//variables that contain character sets available for use in passwrod generation
+var upperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var lowerSet = "abcdefghijklmnopqrstuvwxyz";
+var numSet = "0123456789";
+var specialSet = "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
+
+//arrays that contain character sets available for use in password generation
+var upperArr = upperSet.split("");
+var lowerArr = lowerSet.split("");
+var numberArr = numSet.split("");
+var specialArr = specialSet.split("");
+
+//check arrays have the correct characters included
+console.log(upperArr);
+console.log(lowerArr);
+console.log(numberArr);
+console.log(specialArr);
+
+//create variables with (global scope) that represent the criteria selected by the user
+var includeUpper;
+var includeLower;
+var includeNum;
+var includeSpecial;
+var userLen;
+
+//create an object to store password length selected by user
+var userInputOptions = {};
+
+//create a variable that will contain the characters randomly selected, based upon the user's criteria
+var newPassword;
+
+//Target the button with the variable generateBtn. This allows me to later add an event listener to the button.
 var generateBtn = document.querySelector("#generate");
-var newPassword = '';
-// Write password to the #password input
-//=====================================================================================================================
-//Define funciton 'writePassword' that when called initiates the user to start creating their password
-function writePassword() {
-  //Define expression function (uses variable to call the function) that when invoked, concatenates the text of the array (password) that is made up of the values from the object passwordText.
-  //var password = generatePassword();
-
-  //create an empty array that will store the characters to be used in making the password
-  var charArr = [];
 
 
-  //Create expression function (uses variable to call the function) that when called, returns the textarea element in the html file with id="pasword"
-  var passwordText = document.querySelector("#password");
-  //call the pwLen function to begin sequence of asking user for criteria
-  pwLen();
-  //Promt user for input critera for password
-  //===================================================================================================================
-  //Function that prompts user for a number greater than or equal to 8 and less than or equal to 128, and checks if criteria are met.
-      function pwLen() {
-      //prompts user for password length
-      var userLen = prompt('How long would you like your password to be? Minimum required length is 8 and maximum is 128.');
-      //pareses user input as integer
-      var userLen = parseInt(userLen);
-      //conditional statement to check if user iput meets password length criteria
-      if (typeof userLen === 'number' && userLen >=8 && userLen <= 128) {
-        console.log("user supplied password length value is acceptable");
-        charType();
-      //function quits if user selects "cancel"
-      } else if (!(userLen)){
-        console.log("The user decided not to make a password.");
-        return;
-      } else {
-        //Alert user imporper input, and remind of required criteria
-        alert("Please enter a whole number between 8 and 128 (inclusive).");
-        //re-invoke funciton so user can try again
-        pwLen();
-      }
+
+//Prompt user for password options
+function getPasswordOptions()   {
+    //prompts user for desired password length
+    userLen = prompt('How long would you like your password to be? Minimum required length is 8 and maximum is 128.');
+    //pareses user input as integer
+    userLen = parseInt(userLen);
+    //conditional statement to check if user iput meets password length criteria
+    if (typeof userLen === 'number' && userLen >=8 && userLen <= 128) {
+      console.log("user supplied password length value is acceptable");
+    //function quits if user selects "cancel"
+    } else if (!(userLen)){
+      console.log("The user decided not to make a password.");
+      return;
+    } else {
+      //Alert user imporper input, and remind of required criteria
+      alert("Please enter a whole number between 8 and 128 (inclusive).");
+      //re-invoke funciton so user can try again
+      getPasswordOptions();
     }
-
-
-    
-  //Function to let user decide which types of characters to include
-    function charType() {
-      //ask if user wants to include uppercase letters
-      var includeUpper = confirm("Would you like to include uppercase letter characters?");
-      //ask if user wants to include lowercase letters
-      var includeLower = confirm("Would you like to include lowercase letter characters?");
-      //ask if user wants to include numbers
-      var includeNum = confirm("Would you like to include number characters?");
-      //ask if user wants to include special characters
-      var includeSpecial = confirm("Would you like to include special characters?");
-      //define variable for character sets
-      var upperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      var lowerSet = "abcdefghijklmnopqrstuvwxyz";
-      var numSet = "0123456789";
-      var specialSet = "!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
-      
-
-
-      //add selected characters to and array
-      if (includeUpper) {
-        charArr.push(upperSet);
-      }
-      if (includeLower) {
-        charArr.push(lowerSet);
-      }
-      if (includeNum) {
-        charArr.push(numSet);
-      }
-      if (includeSpecial) {
-        charArr.push(specialSet);
-      }
-      if (charArr === undefined || charArr.length == 0) {
-        alert("You must select at least one character type to include in your password");
+    //ask if user wants to include uppercase letters
+    includeUpper = confirm("Would you like to include uppercase letter characters?");
+    //ask if user wants to include lowercase letters
+    includeLower = confirm("Would you like to include lowercase letter characters?");
+    //ask if user wants to include numbers
+    includeNum = confirm("Would you like to include number characters?");
+    //ask if user wants to include special characters
+    includeSpecial = confirm("Would you like to include special characters?");
+    //check if user selected no variables at all .End if no characters selected.
+    if (!(includeUpper) && !(includeLower) && !(includeNum) && !(includeSpecial)) {
+        console.log("The user chose not to include any characters.");
+        //tell the user that they must select at least one character type
+        alert("You failed to choose any of the eligible character sets");
+        //exit the function
         return;
-      }
+    } else {
+        //if at least one character type has benn selected, call the function that generates a password using the user's input
+        generatePassword();
     }
-    //merge all contents of character set array into a single string, without a separator
-    var charSet = charArr.join('');
-    console.log(charSet);
-    generatePW();
+   
+};
 
-  }
+ //Add user's selected length option to the object userInputOptions
+    userInputOptions.passwordLength = userLen;
+    console.log(userInputOptions.passwordLength);
 
 
-  //Return the value of passwordText and set it to password
-  //passwordText.value = password;
+//Function for getting a random element from an array. Parameter x will allow for user selected array to be an argument
+function randomElement(x) {
+    return x[Math.floor(Math.random()*x.length)];
+};
 
-// Add event listener to generate button
-//Attaches an event handler to the button id="generate". When the button is clicked, invoke the function writePassword.
-generateBtn.addEventListener("click", writePassword);
+//Function that generates password from user's input
+function generatePassword() {
+    //Array to store all possible characters to inclue in password (an array of arrays)
+    var includeChars = [];
+
+    //Array to include one of each of the chosen characters to ensure each will be used
+    var guaranteedCharacters = [];
+
+    //Conditional statements that adds characters from an array into array of possible characters for use, based on user input.
+    if (includeSpecial) {
+        //loop over array of special characters, adding each one into the ultimate set of characters that will be used to make the pw (includeChars)
+        for (var i = 0; i < specialArr.length; i++) {
+            includeChars.push(specialArr[i]);
+        }
+        //add one random character from user selected character set into the array of guaranteed characters.
+        guaranteedCharacters.push(randomElement(specialArr));
+        //check arrays
+        console.log(includeChars);
+        console.log(guaranteedCharacters);
+    }
+    if (includeNum) {
+        //loop over array of number characters, adding each one into the ultimate set of characters that will be used to make the pw (includeChars)
+        for (var i = 0; i < numberArr.length; i++) {
+            includeChars.push(numberArr[i]);
+        }
+        //add one random character from user selected character set into the array of guaranteed characters.
+        guaranteedCharacters.push(randomElement(numberArr));
+        //check arrays
+        console.log(includeChars);
+        console.log(guaranteedCharacters);
+    }
+    if (includeLower) {
+        //loop over array of lower case characters, adding each one into the ultimate set of characters that will be used to make the pw (includeChars)
+        for (var i = 0; i < lowerArr.length; i++) {
+            includeChars.push(lowerArr[i]);
+        }
+        //add one random character from user selected character set into the array of guaranteed characters.
+        guaranteedCharacters.push(randomElement(lowerArr));
+        //check arrays
+        console.log(includeChars);
+        console.log(guaranteedCharacters);
+    }
+    if (includeUpper) {
+        //loop over array of upper case characters, adding each one into the ultimate set of characters that will be used to make the pw (includeChars)
+        for (var i = 0; i < upperArr.length; i++) {
+            includeChars.push(upperArr[i]);
+        }
+        //add one random character from user selected character set into the array of guaranteed characters.
+        guaranteedCharacters.push(randomElement(upperArr));
+        //check arrays
+        console.log(includeChars);
+        console.log(guaranteedCharacters);
+    }
+    //Define a for loop that iterates i times (i= the length of the password the user selected, which is stored in the object userInputOptions). The loop first selects the guaranteed characters (guaranteedCharacters), and then random indicies from the array of possible characters (includeChars). The results are concatenated into the variable newPassword.
+    for (var i = 0; i <= userInputOptions.passwordLength; i++) {
+        console.log(includeChars[i]);
+    }
+}
+
+
+
+//Attaches an event handler to the button id="generate". When the button is clicked, invoke the function getPasswordOptions.
+generateBtn.addEventListener("click", getPasswordOptions);
