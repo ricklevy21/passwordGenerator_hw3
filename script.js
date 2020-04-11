@@ -69,15 +69,17 @@ function getPasswordOptions()   {
         //exit the function
         return;
     } else {
+        //Add user's selected length option to the object userInputOptions
+        userInputOptions.passwordLength = userLen;
+        //check that the user's selected length is successfully added to the object
+        console.log(userInputOptions.passwordLength);
         //if at least one character type has benn selected, call the function that generates a password using the user's input
         generatePassword();
     }
-   
+
 };
 
- //Add user's selected length option to the object userInputOptions
-    userInputOptions.passwordLength = userLen;
-    console.log(userInputOptions.passwordLength);
+
 
 
 //Function for getting a random element from an array. Parameter x will allow for user selected array to be an argument
@@ -147,4 +149,5 @@ function generatePassword() {
 
 
 //Attaches an event handler to the button id="generate". When the button is clicked, invoke the function getPasswordOptions.
-generateBtn.addEventListener("click", getPasswordOptions);
+generateBtn.addEventListener("click", getPasswordOptions); 
+
