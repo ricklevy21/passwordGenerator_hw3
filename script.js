@@ -153,6 +153,8 @@ function generatePassword() {
         console.log(includeChars);
         console.log(guaranteedCharacters);
     }
+    //empty newPassword array. this must be included so that the user can generate password after password, without refreshing the page.
+    newPassword = [];
     //Define a for loop that iterates i times (i= the length of the password the user selected reduced by the number of items there are in the guarenteedCharacters array). Then concat all the return values and the items from the guaranteedCharacters array.
     for (var i = 0; i < (userInputOptions.passwordLength - guaranteedCharacters.length); i++){
             console.log(randomElement(includeChars));
