@@ -27,12 +27,22 @@ var userLen;
 var userInputOptions = {};
 
 //create a variable that will contain the characters randomly selected, based upon the user's criteria
-var newPassword;
+var newPassword = [];
+
+//create a variable that will be equal to the password generated
+var finalPassword;
 
 //Target the button with the variable generateBtn. This allows me to later add an event listener to the button.
 var generateBtn = document.querySelector("#generate");
+var passwordText = document.querySelector("#password");
 
 
+//function that is invoked when button is clicked. Calls cascade of scripts and writes password onto the document.
+function writePassword() {
+    
+    getPasswordOptions();
+    passwordText.textContent = finalPassword;
+}
 
 //Prompt user for password options
 function getPasswordOptions()   {
@@ -72,7 +82,8 @@ function getPasswordOptions()   {
         //Add user's selected length option to the object userInputOptions
         userInputOptions.passwordLength = userLen;
         //check that the user's selected length is successfully added to the object
-        console.log(userInputOptions.passwordLength);
+        console.log("here is how many chars they want "+ userInputOptions.passwordLength);
+        
         //if at least one character type has benn selected, call the function that generates a password using the user's input
         generatePassword();
     }
@@ -82,10 +93,12 @@ function getPasswordOptions()   {
 
 
 
-//Function for getting a random element from an array. Parameter x will allow for user selected array to be an argument
+//Function for getting a random element from an array. Parameter x will allow for user selected array to be an argument. Used in for loops to grab characters from includeChars array.
 function randomElement(x) {
     return x[Math.floor(Math.random()*x.length)];
 };
+
+
 
 //Function that generates password from user's input
 function generatePassword() {
@@ -140,14 +153,20 @@ function generatePassword() {
         console.log(includeChars);
         console.log(guaranteedCharacters);
     }
-    //Define a for loop that iterates i times (i= the length of the password the user selected, which is stored in the object userInputOptions). The loop first selects the guaranteed characters (guaranteedCharacters), and then random indicies from the array of possible characters (includeChars). The results are concatenated into the variable newPassword.
-    for (var i = 0; i <= userInputOptions.passwordLength; i++) {
-        console.log(includeChars[i]);
+    //Define a for loop that iterates i times (i= the length of the password the user selected reduced by the number of items there are in the guarenteedCharacters array). Then concat all the return values and the items from the guaranteedCharacters array.
+    for (var i = 0; i < (userInputOptions.passwordLength - guaranteedCharacters.length); i++){
+            console.log(randomElement(includeChars));
+            newPassword.push(randomElement(includeChars))
     }
+    console.log(newPassword);
+    //add on the guarenteed characters
+    newPassword = newPassword.concat(guaranteedCharacters);
+    console.log(newPassword);
+    //create a string from the array containing the characters to make a password
+    finalPassword = newPassword.join('');
+    console.log(finalPassword);
 }
 
-
-
 //Attaches an event handler to the button id="generate". When the button is clicked, invoke the function getPasswordOptions.
-generateBtn.addEventListener("click", getPasswordOptions); 
+generateBtn.addEventListener("click", writePassword); 
 
